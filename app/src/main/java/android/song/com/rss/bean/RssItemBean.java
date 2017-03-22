@@ -18,10 +18,9 @@ public class RssItemBean extends BaseBean{
 
     @Override
     public String toString() {
-        return "RssItemBean{" +
+        return "\nRssItemBean{" +
                 "title='" + title + '\'' +
                 ", link='" + link + '\'' +
-                ", description='" + description + '\'' +
-                '}';
+                '}' + "\n";
     }
 }

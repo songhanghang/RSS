@@ -1,14 +1,14 @@
 package android.song.com.rss.http;
 
 import android.song.com.rss.bean.RssRootBean;
-import android.util.Log;
+import android.support.annotation.NonNull;
 
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 import retrofit2.http.GET;
+import retrofit2.http.Url;
 
 /**
  * Created by songhang on 2017/3/21.
@@ -17,35 +17,29 @@ import retrofit2.http.GET;
 
 public class HttpRequest {
     private static class Holder {
-        public final static HttpRequest request = new HttpRequest();
+        private final static HttpRequest sRequest = new HttpRequest();
+        private final static Retrofit.Builder sBuilder = new Retrofit.Builder()
+                .baseUrl("http://host")
+                .addConverterFactory(SimpleXmlConverterFactory.create());
     }
 
     public static HttpRequest getInstance() {
-        return Holder.request;
+        return Holder.sRequest;
     }
 
-    public void request(String url) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://mobilefrontier.github.io/")
-                .addConverterFactory(SimpleXmlConverterFactory.create())
-                .build();
+    public void request(@NonNull String url, MyCallback<RssRootBean> httpCallback) {
+        Retrofit retrofit = Holder.sBuilder.build();
         IGet get = retrofit.create(IGet.class);
-        Call<RssRootBean> call = get.get();
-        call.enqueue(new Callback<RssRootBean>() {
-            @Override
-            public void onResponse(Call<RssRootBean> call, Response<RssRootBean> response) {
-                Log.i("songhang", response.body().toString());
-            }
-
-            @Override
-            public void onFailure(Call<RssRootBean> call, Throwable t) {
-
-            }
-        });
+        Call<RssRootBean> call = get.get(url);
+        call.enqueue(httpCallback);
     }
 
-    public interface IGet {
-        @GET("index.xml")
-        Call<RssRootBean> get();
+    private interface IGet {
+        @GET()
+        Call<RssRootBean> get(@Url String url);
+    }
+
+    public abstract static class MyCallback<T> implements Callback<T>{
+
     }
 }
