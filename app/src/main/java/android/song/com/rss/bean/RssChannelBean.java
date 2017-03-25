@@ -19,7 +19,7 @@ public class RssChannelBean extends BaseBean {
     @Element(name = "lastBuildDate")
     public String lastBuildDate;
     @ElementList(name = "item", inline = true)
-    public List<RssItemBean> Items;
+    public List<RssItemBean> mItems;
 
     @Override
     public String toString() {
@@ -27,7 +27,7 @@ public class RssChannelBean extends BaseBean {
                 "title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", lastBuildDate='" + lastBuildDate + '\'' +
-                ", Items=" + Items +
+                ", mItems=" + mItems +
                 '}';
     }
 }

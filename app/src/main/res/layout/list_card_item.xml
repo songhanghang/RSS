@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/linear_list_card_item"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@android:color/white"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    app:stackHeaderHeight="120dp">
+
+    <RelativeLayout
+        android:id="@+id/frame_list_card_item"
+        android:layout_width="match_parent"
+        android:rotationX="-5"
+        android:layout_height="120dp">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="3dp"
+            app:contentPadding="4dp"
+            app:cardCornerRadius="4dp">
+            <TextView
+                android:id="@+id/text_list_card_title"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColor="@android:color/black"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                tools:text="12"/>
+        </android.support.v7.widget.CardView>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/container_list_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:text="Every corner must (initially) be provided a corner radius greater than 1, or else no corners are rounded. If you want specific corners to not be rounded, a work-around is to use android:radius to set a default corner radius greater than 1, but then override each and every corner with the values you really want, providing zero (0dp) where you don't want rounded corners."
+            />
+    </LinearLayout>
+
+</LinearLayout>

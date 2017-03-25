@@ -2,8 +2,9 @@ package android.song.com.rss.activity;
 
 import android.os.Bundle;
 import android.song.com.rss.R;
+import android.song.com.rss.adapter.TestStackAdapter;
 import android.song.com.rss.bean.RssRootBean;
-import android.song.com.rss.http.HttpRequest;
+import android.song.com.rss.presenter.RssAlbumPresenter;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -12,16 +13,17 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import retrofit2.Call;
-import retrofit2.Response;
+import com.loopeer.cardstack.CardStackView;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, RssAlbumPresenter.IRssAlbumView, CardStackView.ItemExpendListener {
+    private CardStackView mStackView;
+    private TestStackAdapter mAdapter;
+    private RssAlbumPresenter mAlbumPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,20 +49,13 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        HttpRequest.getInstance().request("https://juejin.im/rss", new HttpRequest.MyCallback<RssRootBean>() {
 
-            @Override
-            public void onResponse(Call<RssRootBean> call, Response<RssRootBean> response) {
-                Log.i("songhang", response.body().toString());
-            }
-
-            @Override
-            public void onFailure(Call<RssRootBean> call, Throwable t) {
-
-            }
-        });
-
-
+        mStackView = (CardStackView) findViewById(R.id.card_stack_view);
+        mAdapter = new TestStackAdapter(this);
+        mStackView.setAdapter(mAdapter);
+        mStackView.setItemExpendListener(this);
+        mAlbumPresenter = new RssAlbumPresenter(this);
+        mAlbumPresenter.featchData("https://juejin.im/rss");
 
     }
 
@@ -120,5 +115,15 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onItemExpend(boolean expend) {
+
+    }
+
+    @Override
+    public void loadSuccess(RssRootBean bean) {
+        mAdapter.updateData(bean.mChannelBean.mItems);
     }
 }
