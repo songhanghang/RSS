@@ -1,9 +1,10 @@
 package android.song.com.rss.adapter;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.graphics.Color;
 import android.song.com.rss.R;
 import android.song.com.rss.bean.RssItemBean;
+import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -13,20 +14,15 @@ import com.loopeer.cardstack.StackAdapter;
 
 public class TestStackAdapter extends StackAdapter<RssItemBean> {
 
+    private Context mContext;
+
     public TestStackAdapter(Context context) {
         super(context);
+        mContext = context;
     }
 
     @Override
     public void bindView(RssItemBean data, int position, CardStackView.ViewHolder holder) {
-        if (holder instanceof ColorItemLargeHeaderViewHolder) {
-            ColorItemLargeHeaderViewHolder h = (ColorItemLargeHeaderViewHolder) holder;
-            h.onBind(data, position);
-        }
-        if (holder instanceof ColorItemWithNoHeaderViewHolder) {
-            ColorItemWithNoHeaderViewHolder h = (ColorItemWithNoHeaderViewHolder) holder;
-            h.onBind(data, position);
-        }
         if (holder instanceof ColorItemViewHolder) {
             ColorItemViewHolder h = (ColorItemViewHolder) holder;
             h.onBind(data, position);
@@ -35,131 +31,52 @@ public class TestStackAdapter extends StackAdapter<RssItemBean> {
 
     @Override
     protected CardStackView.ViewHolder onCreateView(ViewGroup parent, int viewType) {
-        View view;
-        switch (viewType) {
-            case R.layout.list_card_item_larger_header:
-                view = getLayoutInflater().inflate(R.layout.list_card_item_larger_header, parent, false);
-                return new ColorItemLargeHeaderViewHolder(view);
-            case R.layout.list_card_item_with_no_header:
-                view = getLayoutInflater().inflate(R.layout.list_card_item_with_no_header, parent, false);
-                return new ColorItemWithNoHeaderViewHolder(view);
-            default:
-                view = getLayoutInflater().inflate(R.layout.list_card_item, parent, false);
-                return new ColorItemViewHolder(view);
-        }
+        return new ColorItemViewHolder(getLayoutInflater().inflate(R.layout.list_card_item, parent, false));
     }
 
     @Override
     public int getItemViewType(int position) {
-//        if (position == 6) {//TODO TEST LARGER ITEM
-//            return R.layout.list_card_item_larger_header;
-//        } else if (position == 10) {
-//            return R.layout.list_card_item_with_no_header;
-//        }else {
         return R.layout.list_card_item;
-//        }
     }
 
     static class ColorItemViewHolder extends CardStackView.ViewHolder {
         View mLayout;
         View mContainerContent;
         TextView mTextTitle;
+        TextView mTextContent;
+        ObjectAnimator mAnimator;
 
         public ColorItemViewHolder(View view) {
             super(view);
             mLayout = view.findViewById(R.id.frame_list_card_item);
             mContainerContent = view.findViewById(R.id.container_list_content);
             mTextTitle = (TextView) view.findViewById(R.id.text_list_card_title);
+            mTextContent = (TextView) view.findViewById(R.id.text_list_card_content);
+            mAnimator = ObjectAnimator.ofFloat(mLayout, "RotationX", -5, 0);
         }
 
         @Override
         public void onItemExpand(boolean b) {
+            if (b) {
+                mAnimator.start();
+            } else {
+                mAnimator.reverse();
+            }
             mContainerContent.setVisibility(b ? View.VISIBLE : View.GONE);
         }
 
         public void onBind(RssItemBean data, int position) {
-            int index = position % 3;
-            int color = Color.BLUE;
-            switch (index) {
-                case 0:
-                    color = Color.BLUE;
-                    break;
-                case 1:
-                    color = Color.RED;
-                    break;
-                case 2:
-                    color = Color.GREEN;
-                    break;
-            }
-//            mLayout.getBackground().setColorFilter(color, PorterDuff.Mode.SRC_IN);
             mTextTitle.setText(String.valueOf(position) + ": " + data.title);
-        }
-
-    }
-
-    static class ColorItemWithNoHeaderViewHolder extends CardStackView.ViewHolder {
-        View mLayout;
-        TextView mTextTitle;
-
-        public ColorItemWithNoHeaderViewHolder(View view) {
-            super(view);
-            mLayout = view.findViewById(R.id.frame_list_card_item);
-            mTextTitle = (TextView) view.findViewById(R.id.text_list_card_title);
-        }
-
-        @Override
-        public void onItemExpand(boolean b) {
-        }
-
-        public void onBind(RssItemBean data, int position) {
-//            mLayout.getBackground().setColorFilter(data.color, PorterDuff.Mode.SRC_IN);
-
-            mTextTitle.setText(String.valueOf(position));
-        }
-
-    }
-
-    static class ColorItemLargeHeaderViewHolder extends CardStackView.ViewHolder {
-        View mLayout;
-        View mContainerContent;
-        TextView mTextTitle;
-
-        public ColorItemLargeHeaderViewHolder(View view) {
-            super(view);
-            mLayout = view.findViewById(R.id.frame_list_card_item);
-            mContainerContent = view.findViewById(R.id.container_list_content);
-            mTextTitle = (TextView) view.findViewById(R.id.text_list_card_title);
-        }
-
-        @Override
-        public void onItemExpand(boolean b) {
-            mContainerContent.setVisibility(b ? View.VISIBLE : View.GONE);
-        }
-
-        @Override
-        protected void onAnimationStateChange(int state, boolean willBeSelect) {
-            super.onAnimationStateChange(state, willBeSelect);
-            if (state == CardStackView.ANIMATION_STATE_START && willBeSelect) {
-                onItemExpand(true);
-            }
-            if (state == CardStackView.ANIMATION_STATE_END && !willBeSelect) {
-                onItemExpand(false);
-            }
-        }
-
-        public void onBind(RssItemBean data, int position) {
-//            mLayout.getBackground().setColorFilter(data.color, PorterDuff.Mode.SRC_IN);
-
-            mTextTitle.setText(String.valueOf(position));
-
-            itemView.findViewById(R.id.text_view).setOnClickListener(new View.OnClickListener() {
+            mTextContent.setText(Html.fromHtml(data.description));
+            mTextContent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((CardStackView) itemView.getParent()).performItemClick(ColorItemLargeHeaderViewHolder.this);
+
                 }
             });
         }
 
     }
+
 
 }
