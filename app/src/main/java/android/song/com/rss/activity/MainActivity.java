@@ -2,41 +2,41 @@ package android.song.com.rss.activity;
 
 import android.os.Bundle;
 import android.song.com.rss.R;
-import android.song.com.rss.adapter.TestStackAdapter;
-import android.song.com.rss.bean.RssRootBean;
-import android.song.com.rss.presenter.RssAlbumPresenter;
+import android.song.com.rss.adapter.RssPageAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.loopeer.cardstack.CardStackView;
+import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
-public class MainActivity extends AppCompatActivity
-        implements RssAlbumPresenter.IRssAlbumView, CardStackView.ItemExpendListener {
-    private CardStackView mStackView;
-    private TestStackAdapter mAdapter;
-    private RssAlbumPresenter mAlbumPresenter;
+public class MainActivity extends AppCompatActivity {
+
+    private SmartTabLayout mTabLayout;
+    private RssPageAdapter mPageAdapter;
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.app_bar_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mStackView = (CardStackView) findViewById(R.id.card_stack_view);
-        mAdapter = new TestStackAdapter(this);
-        mStackView.setAdapter(mAdapter);
-        mStackView.setItemExpendListener(this);
-        mAlbumPresenter = new RssAlbumPresenter(this);
-        mAlbumPresenter.featchData("https://juejin.im/rss");
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        mTabLayout = (SmartTabLayout) findViewById(R.id.smart_tab_layout);
 
+        mPageAdapter = new RssPageAdapter(getSupportFragmentManager());
+        mViewPager.setAdapter(mPageAdapter);
+        mTabLayout.setViewPager(mViewPager);
     }
 
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
     }
 
     @Override
@@ -59,15 +59,5 @@ public class MainActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onItemExpend(boolean expend) {
-
-    }
-
-    @Override
-    public void loadSuccess(RssRootBean bean) {
-        mAdapter.updateData(bean.mChannelBean.mItems);
     }
 }

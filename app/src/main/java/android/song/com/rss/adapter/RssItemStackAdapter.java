@@ -12,11 +12,11 @@ import android.widget.TextView;
 import com.loopeer.cardstack.CardStackView;
 import com.loopeer.cardstack.StackAdapter;
 
-public class TestStackAdapter extends StackAdapter<RssItemBean> {
+public class RssItemStackAdapter extends StackAdapter<RssItemBean> {
 
     private Context mContext;
 
-    public TestStackAdapter(Context context) {
+    public RssItemStackAdapter(Context context) {
         super(context);
         mContext = context;
     }
